@@ -4,6 +4,11 @@
 
 #include <string>
 
+struct Color
+{
+    u8 r, g, b;
+};
+
 class Image
 {
 private:
@@ -32,20 +37,25 @@ private:
         u32 importantColors;
     };
 
-    struct Pixel
-    {
-        u8 r, g, b;
-    };  
+
 #pragma pack(pop)
 
 private:
     ImageHeader header;
     DIBHeader dibHeader;
-    Pixel* pixels;
+    Color* pixels;
 
 public:
     Image() : header{}, dibHeader{}, pixels{nullptr} { }
     Image(int width, int height);
+
+    Color& operator[](int index);
+    Color& operator()(int x, int y);
+    Color& operator[](int index) const;
+    Color& operator()(int x, int y) const;
+
+    u32 getWidth() const;
+    u32 getHeight() const;
 
     void save(const std::string& path);
 
@@ -53,5 +63,5 @@ public:
     bool create(int width, int height);
 
 private:
-    int getPadding() const;
+    u8 getPadding() const;
 };
