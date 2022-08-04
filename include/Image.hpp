@@ -4,10 +4,12 @@
 
 #include <string>
 
+#pragma pack(push, 1)
 struct Color
 {
     u8 b, g, r;
 };
+#pragma pack(pop)
 
 class Image
 {
@@ -36,8 +38,6 @@ private:
         u32 colorNumber;
         u32 importantColors;
     };
-
-
 #pragma pack(pop)
 
 private:

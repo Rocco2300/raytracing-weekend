@@ -13,7 +13,7 @@ int main()
         {
             f32 r = x / 400.f;
             f32 g = y / 400.f;
-            f32 b = 0.2f;
+            f32 b = 0.3f;
 
             img(x, y).r = 255.99 * r;
             img(x, y).g = 255.99 * g;
