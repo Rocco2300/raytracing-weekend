@@ -6,7 +6,7 @@
 
 struct Color
 {
-    u8 r, g, b;
+    u8 b, g, r;
 };
 
 class Image

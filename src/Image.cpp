@@ -94,8 +94,8 @@ bool Image::load(const std::string& path)
     for (int i = height - 1; i >= 0; i--)
     {
         int offset = i * width;
-        fread(pixels + offset, sizeof(Color) * width, 1, file);
-        fseek(file, sizeof(Color) * padding, SEEK_CUR);
+        std::fread(pixels + offset, sizeof(Color) * width, 1, file);
+        std::fseek(file, sizeof(Color) * padding, SEEK_CUR);
     }
 
     std::fclose(file);

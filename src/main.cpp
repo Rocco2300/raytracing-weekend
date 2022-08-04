@@ -5,23 +5,22 @@
 int main()
 {
     Image img;
-    img.load("../lena.bmp");
+    img.create(400, 400);
 
-    for (int i = 0; i < img.getHeight(); i++)
+    for (int y = 0; y < img.getHeight(); y++)
     {
-        for (int j = 0; j < img.getWidth(); j++)
+        for (int x = 0; x < img.getWidth(); x++)
         {
-            int r = img(j, i).r;
-            int g = img(j, i).g;
-            int b = img(j, i).b;
-            int value = (r + b + g) / 3;
+            f32 r = x / 400.f;
+            f32 g = y / 400.f;
+            f32 b = 0.2f;
 
-            img(j, i).r = value;
-            img(j, i).g = value;
-            img(j, i).b = value;
+            img(x, y).r = 255.99 * r;
+            img(x, y).g = 255.99 * g;
+            img(x, y).b = 255.99 * b;
         }
     }
 
-    img.save("../grayscale.bmp");
+    img.save("../uv.bmp");
     return 0;
 }
