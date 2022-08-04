@@ -31,5 +31,7 @@
 *.out
 *.app
 
-# build file
+# Directories
 build/*
+.vscode/*
+.idea/*

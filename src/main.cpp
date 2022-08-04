@@ -1,7 +1,10 @@
 #include <iostream>
 
+#include "Image.hpp"
+
 int main()
 {
-    std::cout << "Hello world!\n";
+    Image img;
+    img.load("../lena.bmp");
     return 0;
 }
