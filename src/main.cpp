@@ -1,5 +1,6 @@
 #include <iostream>
 
+#include "Vec3.hpp"
 #include "Image.hpp"
 
 int main()
@@ -20,6 +21,18 @@ int main()
             img(x, y).b = 255.99 * b;
         }
     }
+
+    Vec3 a(20, 20, 3);
+    Vec3 b(2, 2, 1);
+
+    std::cout << a.x << " " << a.y << " " << a.z << '\n';
+    std::cout << b.x << " " << b.y << " " << b.z << '\n';
+    a += b;
+    std::cout << a.x << " " << a.y << " " << a.z << '\n';
+    std::cout << b.x << " " << b.y << " " << b.z << '\n';
+    b -= a;
+    std::cout << a.x << " " << a.y << " " << a.z << '\n';
+    std::cout << b.x << " " << b.y << " " << b.z << '\n';
 
     img.save("../uv.bmp");
     return 0;
