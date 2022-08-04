@@ -3,6 +3,11 @@
 #include <cstdio>
 #include <cstdlib>
 
+Image::Image(int width, int height) : header{}, dibHeader{}, pixels{nullptr}
+{
+    create(width, height);
+}
+
 int Image::getPadding() const
 {
     int padding;
@@ -67,3 +72,38 @@ bool Image::load(const std::string& path)
 
     return true;
 }
+
+bool Image::create(int width, int height)
+{
+    pixels = (Pixel*)std::malloc(sizeof(Pixel) * (width * height));
+    if (pixels == nullptr)
+        return false;
+
+    header.header = 0b100110101000010;
+
+    int padding;
+    if ((sizeof(Pixel) * width) % 4 == 0)
+        padding = 0;
+    else
+        padding = 4 - (sizeof(Pixel) * width) % 4;
+
+    header.size = 54 + ((width + padding) * height) * sizeof(Pixel);
+    header.reserved1 = 0;
+    header.reserved2 = 0;
+    header.startingOffset = 54;
+
+    dibHeader.headerSize = 40;
+    dibHeader.width = width;
+    dibHeader.height = height;
+    dibHeader.colorPlanes = 1;
+    dibHeader.bitsPerPixel = 24;
+    dibHeader.compression = 0;
+    dibHeader.imageSize = ((width + padding) * height) * sizeof(Pixel);
+    dibHeader.horizontalResolution = 2835;
+    dibHeader.verticalResolution = 2835;
+    dibHeader.colorNumber = 0;
+    dibHeader.importantColors = 0;
+
+    return true;
+}
+

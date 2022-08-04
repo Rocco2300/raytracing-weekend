@@ -45,11 +45,12 @@ private:
 
 public:
     Image() : header{}, dibHeader{}, pixels{nullptr} { }
+    Image(int width, int height);
 
     void save(const std::string& path);
-    void create();
 
     bool load(const std::string& path);
+    bool create(int width, int height);
 
 private:
     int getPadding() const;
