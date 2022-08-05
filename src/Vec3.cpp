@@ -8,9 +8,9 @@ Vec3::Vec3()
 Vec3::Vec3(f32 x, f32 y, f32 z)
     : x{x}, y{y}, z{z} { }
 
-const Vec3 Vec3::operator-() const
+Vec3 Vec3::operator-() const
 {
-    return Vec3(-x, -y, -z);
+    return {x, -y, -z};
 }
 
 Vec3& Vec3::operator+=(const Vec3& v)
@@ -58,4 +58,10 @@ f32 Vec3::squaredLength() const
 void Vec3::makeUnitVec()
 {
     *this /= this->length();
+}
+
+std::ostream& operator<<(std::ostream& os, const Vec3& v)
+{
+    os << v.x << " " << v.y << " " << v.z;
+    return os;
 }

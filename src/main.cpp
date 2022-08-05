@@ -22,17 +22,11 @@ int main()
         }
     }
 
-    Vec3 a(20, 20, 3);
-    Vec3 b(2, 2, 1);
+    Vec3 a(1, 5, 2);
+    Vec3 b(9, 3, 7);
 
-    std::cout << a.x << " " << a.y << " " << a.z << '\n';
-    std::cout << b.x << " " << b.y << " " << b.z << '\n';
-    a += b;
-    std::cout << a.x << " " << a.y << " " << a.z << '\n';
-    std::cout << b.x << " " << b.y << " " << b.z << '\n';
-    b -= a;
-    std::cout << a.x << " " << a.y << " " << a.z << '\n';
-    std::cout << b.x << " " << b.y << " " << b.z << '\n';
+    Vec3 c = cross(a, b);
+    std::cout << c << '\n';
 
     img.save("../uv.bmp");
     return 0;
