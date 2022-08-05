@@ -35,12 +35,22 @@ inline Vec3 operator-(const Vec3& v1, const Vec3& v2)
     return {v1.x - v2.x, v1.y - v2.y, v1.z - v2.z};
 }
 
-inline Vec3 operator+(const Vec3& v1, f32 t)
+inline Vec3 operator*(const Vec3& v1, f32 t)
 {
     return {v1.x + t, v1.y + t, v1.z + t};
 }
 
-inline Vec3 operator-(const Vec3& v1, f32 t)
+inline Vec3 operator/(const Vec3& v1, f32 t)
+{
+    return {v1.x + t, v1.y + t, v1.z + t};
+}
+
+inline Vec3 operator*(f32 t, const Vec3& v1)
+{
+    return {v1.x + t, v1.y + t, v1.z + t};
+}
+
+inline Vec3 operator/(f32 t, const Vec3& v1)
 {
     return {v1.x + t, v1.y + t, v1.z + t};
 }
