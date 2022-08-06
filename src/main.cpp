@@ -8,29 +8,46 @@
 #include "Ray.hpp"
 #include "Image.hpp"
 
+f32 randFloat()
+{
+    static u64 timeSeed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
+    static std::seed_seq ss{u32(timeSeed & 0xffffffff), u32(timeSeed >> 32)};
+
+    static std::mt19937 rng(ss);
+    static std::uniform_real_distribution<f32> unif(0, 1);
+
+    return unif(rng);
+}
+
+Vec3 randomInUnitSphere()
+{
+    Vec3 p;
+    do
+    {
+        p = 2.f*Vec3(randFloat(), randFloat(), randFloat()) - Vec3(1.f);
+    } while (dot(p, p) >= 1.f);
+
+    return p;
+}
+
 Vec3 color(const Ray& r, Hitable *hitable)
 {
     HitRecord rec;
     if (hitable->hit(r, 0.0, std::numeric_limits<float>::max(), rec))
     {
-        return 0.5f*Vec3(rec.normal.x+1, rec.normal.y+1, rec.normal.z+1);
+        Vec3 target = rec.p + rec.normal + randomInUnitSphere();
+        return 0.5f*color(Ray(rec.p, target-rec.p), hitable);
     }
     else
     {
         Vec3 unitDirection = unitVector(r.direction);
         f32 t = 0.5f * (unitDirection.y + 1.f);
-        return (1.f - t)*Vec3(1.f, 1.f, 1.f) + t*Vec3(0.5f, 0.7f, 1.f);
+        return (1.f - t)*Vec3(1.f) + t*Vec3(0.5f, 0.7f, 1.f);
     }
 }
 
 int main()
 {
-    u64 timeSeed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
-    std::seed_seq ss{u32(timeSeed & 0xffffffff), u32(timeSeed >> 32)};
-
-    std::mt19937 rng(ss);
-    std::uniform_real_distribution<f32> unif(0, 1);
-
     const int width = 800;
     const int height = width / 2;
     const int sampleCount = 100;
@@ -52,13 +69,14 @@ int main()
             Vec3 col(0, 0, 0);
             for (int s = 0; s < sampleCount; s++)
             {
-                f32 u = f32(x + unif(rng)) / f32(width);
-                f32 v = f32(y + unif(rng)) / f32(height);
+                f32 u = f32(x + randFloat()) / f32(width);
+                f32 v = f32(y + randFloat()) / f32(height);
 
                 Ray r = cam.getRay(u, v);
                 col += color(r, world);
             }
             col /= float(sampleCount);
+            col = Vec3(std::sqrt(col.x), std::sqrt(col.y), std::sqrt(col.z));
 
             img(x, y).r = int(255.99 * col.x);
             img(x, y).g = int(255.99 * col.y);
@@ -66,6 +84,6 @@ int main()
         }
     }
 
-    img.save("../render.bmp");
+    img.save("../render_git.bmp");
     return 0;
 }
