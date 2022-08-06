@@ -1,39 +1,24 @@
 #include <iostream>
 #include <cmath>
+#include <limits>
 
+#include "Sphere.hpp"
 #include "Ray.hpp"
 #include "Image.hpp"
 
-f32 hitSphere(const Vec3& center, f32 radius, const Ray& r)
+Vec3 color(const Ray& r, Hitable *hitable)
 {
-    Vec3 oc = r.origin - center;
-    f32 a = dot(r.direction, r.direction);
-    f32 b = 2.f * dot(oc, r.direction);
-    f32 c = dot(oc, oc) - radius*radius;
-    f32 discriminant = b*b - 4*a*c;
-
-    if (discriminant < 0)
+    HitRecord rec;
+    if (hitable->hit(r, 0.0, std::numeric_limits<float>::max(), rec))
     {
-        return -1.f;
+        return 0.5f*Vec3(rec.normal.x+1, rec.normal.y+1, rec.normal.z+1);
     }
     else
     {
-        return (-b - std::sqrt(discriminant)) / (2.f * a);
+        Vec3 unitDirection = unitVector(r.direction);
+        f32 t = 0.5f * (unitDirection.y + 1.f);
+        return (1.f - t)*Vec3(1.f, 1.f, 1.f) + t*Vec3(0.5f, 0.7f, 1.f);
     }
-}
-
-Vec3 color(const Ray& r)
-{
-    f32 t = hitSphere(Vec3(0, 0, -1), 0.5f, r);
-    if (t > 0.f)
-    {
-        Vec3 N = unitVector(r.at(t) - Vec3(0, 0, -1));
-        return 0.5f*Vec3(N.x+1, N.y+1, N.z+1);
-    }
-
-    Vec3 unitDirection = unitVector(r.direction);
-    t = 0.5f * (unitDirection.y + 1.f);
-    return (1.f - t)*Vec3(1.f, 1.f, 1.f) + t*Vec3(0.5f, 0.7f, 1.f);
 }
 
 int main()
@@ -49,6 +34,8 @@ int main()
     Vec3 vertical(0.f, -2.f, 0.f);
     Vec3 origin(0.f, 0.f, 0.f);
 
+    Sphere *sphere = new Sphere(Vec3(0, 0, -1), 0.5f);
+
     for (int y = 0; y < height; y++)
     {
         for (int x = 0; x < width; x++)
@@ -57,7 +44,7 @@ int main()
             f32 v = y / float(height);
 
             Ray r(origin, lowerLeftCorner + u*horizontal + v*vertical);
-            Vec3 col = color(r);
+            Vec3 col = color(r, sphere);
 
             img(x, y).r = int(255.99 * col.x);
             img(x, y).g = int(255.99 * col.y);
