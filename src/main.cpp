@@ -1,33 +1,58 @@
 #include <iostream>
 
-#include "Vec3.hpp"
+#include "Ray.hpp"
 #include "Image.hpp"
+
+bool hitSphere(const Vec3& center, f32 radius, const Ray& r)
+{
+    Vec3 oc = r.origin - center;
+    f32 a = dot(r.direction, r.direction);
+    f32 b = 2.f * dot(oc, r.direction);
+    f32 c = dot(oc, oc) - radius*radius;
+    f32 discriminant = b*b - 4*a*c;
+
+    return (discriminant > 0);
+}
+
+Vec3 color(const Ray& r)
+{
+    if (hitSphere(Vec3(0, 0, -1), 0.5f, r))
+        return {1, 0, 0};
+
+    Vec3 unitDirection = unitVector(r.direction);
+    f32 t = 0.5f * (unitDirection.y + 1.f);
+    return (1.f - t)*Vec3(1.f, 1.f, 1.f) + t*Vec3(0.5f, 0.7f, 1.f);
+}
 
 int main()
 {
+    const int width = 800;
+    const int height = width / 2;
+
     Image img;
-    img.create(400, 400);
+    img.create(width, height);
 
-    for (int y = 0; y < img.getHeight(); y++)
+    Vec3 lowerLeftCorner(-2.f, 1.f, -1.f);
+    Vec3 horizontal(4.f, 0.f, 0.f);
+    Vec3 vertical(0.f, -2.f, 0.f);
+    Vec3 origin(0.f, 0.f, 0.f);
+
+    for (int y = 0; y < height; y++)
     {
-        for (int x = 0; x < img.getWidth(); x++)
+        for (int x = 0; x < width; x++)
         {
-            f32 r = x / 400.f;
-            f32 g = y / 400.f;
-            f32 b = 0.3f;
+            f32 u = x / float(width);
+            f32 v = y / float(height);
 
-            img(x, y).r = 255.99 * r;
-            img(x, y).g = 255.99 * g;
-            img(x, y).b = 255.99 * b;
+            Ray r(origin, lowerLeftCorner + u*horizontal + v*vertical);
+            Vec3 col = color(r);
+
+            img(x, y).r = int(255.99 * col.x);
+            img(x, y).g = int(255.99 * col.y);
+            img(x, y).b = int(255.99 * col.z);
         }
     }
 
-    Vec3 a(1, 5, 2);
-    Vec3 b(9, 3, 7);
-
-    Vec3 c = cross(a, b);
-    std::cout << c << '\n';
-
-    img.save("../uv.bmp");
+    img.save("../render.bmp");
     return 0;
 }
