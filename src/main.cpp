@@ -1,9 +1,10 @@
 #include <iostream>
+#include <cmath>
 
 #include "Ray.hpp"
 #include "Image.hpp"
 
-bool hitSphere(const Vec3& center, f32 radius, const Ray& r)
+f32 hitSphere(const Vec3& center, f32 radius, const Ray& r)
 {
     Vec3 oc = r.origin - center;
     f32 a = dot(r.direction, r.direction);
@@ -11,16 +12,27 @@ bool hitSphere(const Vec3& center, f32 radius, const Ray& r)
     f32 c = dot(oc, oc) - radius*radius;
     f32 discriminant = b*b - 4*a*c;
 
-    return (discriminant > 0);
+    if (discriminant < 0)
+    {
+        return -1.f;
+    }
+    else
+    {
+        return (-b - std::sqrt(discriminant)) / (2.f * a);
+    }
 }
 
 Vec3 color(const Ray& r)
 {
-    if (hitSphere(Vec3(0, 0, -1), 0.5f, r))
-        return {1, 0, 0};
+    f32 t = hitSphere(Vec3(0, 0, -1), 0.5f, r);
+    if (t > 0.f)
+    {
+        Vec3 N = unitVector(r.at(t) - Vec3(0, 0, -1));
+        return 0.5f*Vec3(N.x+1, N.y+1, N.z+1);
+    }
 
     Vec3 unitDirection = unitVector(r.direction);
-    f32 t = 0.5f * (unitDirection.y + 1.f);
+    t = 0.5f * (unitDirection.y + 1.f);
     return (1.f - t)*Vec3(1.f, 1.f, 1.f) + t*Vec3(0.5f, 0.7f, 1.f);
 }
 
