@@ -2,6 +2,7 @@
 #include <cmath>
 #include <limits>
 
+#include "HitableList.hpp"
 #include "Sphere.hpp"
 #include "Ray.hpp"
 #include "Image.hpp"
@@ -34,7 +35,10 @@ int main()
     Vec3 vertical(0.f, -2.f, 0.f);
     Vec3 origin(0.f, 0.f, 0.f);
 
-    Sphere *sphere = new Sphere(Vec3(0, 0, -1), 0.5f);
+    Hitable *list[2];
+    list[0] = new Sphere(Vec3(0, 0, -1), 0.5f);
+    list[1] = new Sphere(Vec3(0, -100.5, -1), 100);
+    Hitable *world = new HitableList(list, 2);
 
     for (int y = 0; y < height; y++)
     {
@@ -44,7 +48,7 @@ int main()
             f32 v = y / float(height);
 
             Ray r(origin, lowerLeftCorner + u*horizontal + v*vertical);
-            Vec3 col = color(r, sphere);
+            Vec3 col = color(r, world);
 
             img(x, y).r = int(255.99 * col.x);
             img(x, y).g = int(255.99 * col.y);
