@@ -1,7 +1,8 @@
-#include <iostream>
-#include <cmath>
 #include <limits>
+#include <random>
+#include <chrono>
 
+#include "Camera.hpp"
 #include "HitableList.hpp"
 #include "Sphere.hpp"
 #include "Ray.hpp"
@@ -24,16 +25,20 @@ Vec3 color(const Ray& r, Hitable *hitable)
 
 int main()
 {
+    u64 timeSeed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
+    std::seed_seq ss{u32(timeSeed & 0xffffffff), u32(timeSeed >> 32)};
+
+    std::mt19937 rng(ss);
+    std::uniform_real_distribution<f32> unif(0, 1);
+
     const int width = 800;
     const int height = width / 2;
+    const int sampleCount = 100;
 
     Image img;
     img.create(width, height);
 
-    Vec3 lowerLeftCorner(-2.f, 1.f, -1.f);
-    Vec3 horizontal(4.f, 0.f, 0.f);
-    Vec3 vertical(0.f, -2.f, 0.f);
-    Vec3 origin(0.f, 0.f, 0.f);
+    Camera cam;
 
     Hitable *list[2];
     list[0] = new Sphere(Vec3(0, 0, -1), 0.5f);
@@ -44,11 +49,16 @@ int main()
     {
         for (int x = 0; x < width; x++)
         {
-            f32 u = x / float(width);
-            f32 v = y / float(height);
+            Vec3 col(0, 0, 0);
+            for (int s = 0; s < sampleCount; s++)
+            {
+                f32 u = f32(x + unif(rng)) / f32(width);
+                f32 v = f32(y + unif(rng)) / f32(height);
 
-            Ray r(origin, lowerLeftCorner + u*horizontal + v*vertical);
-            Vec3 col = color(r, world);
+                Ray r = cam.getRay(u, v);
+                col += color(r, world);
+            }
+            col /= float(sampleCount);
 
             img(x, y).r = int(255.99 * col.x);
             img(x, y).g = int(255.99 * col.y);
