@@ -9,6 +9,7 @@ public:
     f32 x, y, z;
 public:
     Vec3();
+    Vec3(f32 v);
     Vec3(f32 x, f32 y, f32 z);
 
     Vec3 operator-() const;

@@ -5,6 +5,9 @@
 Vec3::Vec3()
     : x{}, y{}, z{} { }
 
+Vec3::Vec3(f32 v)
+    : x{v}, y{v}, z{v} { }
+
 Vec3::Vec3(f32 x, f32 y, f32 z)
     : x{x}, y{y}, z{z} { }
 
