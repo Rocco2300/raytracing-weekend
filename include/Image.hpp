@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Vec3.hpp"
 #include "Types.hpp"
 
 #include <string>

@@ -91,11 +91,25 @@ bool Image::load(const std::string& path)
 
     int padding = getPadding();
 
-    for (int i = height - 1; i >= 0; i--)
+//    for (int i = height - 1; i >= 0; i--)
+//    {
+//        int offset = i * width;
+//        std::fread(pixels + offset, sizeof(Color) * width, 1, file);
+//        std::fseek(file, sizeof(Color) * padding, SEEK_CUR);
+//    }
+
+    for (int y = height - 1; y >= 0; y--)
     {
-        int offset = i * width;
-        std::fread(pixels + offset, sizeof(Color) * width, 1, file);
-        std::fseek(file, sizeof(Color) * padding, SEEK_CUR);
+        const int yOffset = y * width;
+
+        for (int x = 0; x < width; x++)
+        {
+            const int xOffset = x * sizeof(Color);
+
+            std::fread(pixels + xOffset + yOffset, sizeof(Color), 1, file);
+            std::fseek(file, sizeof(Color) * padding, SEEK_CUR);
+        }
+
     }
 
     std::fclose(file);
