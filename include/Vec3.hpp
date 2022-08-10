@@ -6,7 +6,11 @@
 class Vec3
 {
 public:
-    f32 x, y, z;
+    union
+    {
+        struct { f32 z, y, x; };
+        struct { f32 b, g, r; };
+    };
 public:
     Vec3();
     Vec3(f32 v);

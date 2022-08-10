@@ -5,17 +5,19 @@
 
 #include <string>
 
-#pragma pack(push, 1)
-struct Color
-{
-    u8 b, g, r;
-};
-#pragma pack(pop)
+#include "Vec3.hpp"
+
+using Color = Vec3;
 
 class Image
 {
 private:
 #pragma pack(push, 1)
+    struct Color8
+    {
+        u8 b, g, r;
+    };
+
     struct ImageHeader
     {
         u16 header;
@@ -50,6 +52,8 @@ public:
     Image() : header{}, dibHeader{}, pixels{nullptr} { }
     Image(int width, int height);
 
+    ~Image();
+
     Color& operator[](int index);
     Color& operator()(int x, int y);
     Color& operator[](int index) const;
@@ -65,4 +69,7 @@ public:
 
 private:
     u8 getPadding() const;
+
+    Color* transformToFloat(Color8* data);
+    Color8* transformToChar(Color* data);
 };
