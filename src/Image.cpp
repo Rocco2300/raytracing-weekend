@@ -79,7 +79,10 @@ bool Image::load(const std::string& path)
     file = std::fopen(path.c_str(), "rb");
 
     if (file == nullptr)
+    {
+        std::cout << "Error opening file " << path << "!\n";
         return false;
+    }
 
     std::fread(&this->header, 14, 1, file);
     std::fread(&this->dibHeader, 40, 1, file);
@@ -89,27 +92,20 @@ bool Image::load(const std::string& path)
     auto size = dibHeader.width * dibHeader.height;
     pixels = (Color*)std::malloc(sizeof(Color) * size);
 
+    if (pixels == nullptr)
+    {
+        std::cout << "Error allocating memory for file " << path << "!\n";
+        return false;
+    }
+
     int padding = getPadding();
 
-//    for (int i = height - 1; i >= 0; i--)
-//    {
-//        int offset = i * width;
-//        std::fread(pixels + offset, sizeof(Color) * width, 1, file);
-//        std::fseek(file, sizeof(Color) * padding, SEEK_CUR);
-//    }
-
-    for (int y = height - 1; y >= 0; y--)
+    for (int i = height - 1; i >= 0; i--)
     {
-        const int yOffset = y * width;
+        int offset = i * width;
 
-        for (int x = 0; x < width; x++)
-        {
-            const int xOffset = x * sizeof(Color);
-
-            std::fread(pixels + xOffset + yOffset, sizeof(Color), 1, file);
-            std::fseek(file, sizeof(Color) * padding, SEEK_CUR);
-        }
-
+        std::fread(pixels + offset, sizeof(char) * 3 * width, 1, file);
+        std::fseek(file, sizeof(char) * 3 * padding, SEEK_CUR);
     }
 
     std::fclose(file);

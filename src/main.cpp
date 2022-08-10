@@ -48,12 +48,16 @@ Vec3 color(const Ray& r, Hitable *hitable)
 
 int main()
 {
-    const int width = 800;
+    const int width = 200;
     const int height = width / 2;
     const int sampleCount = 100;
 
     Image img;
     img.create(width, height);
+
+    Image img1;
+    img1.load("../render_git.bmp");
+    img1.save("../test.bmp");
 
     Camera cam;
 
@@ -84,6 +88,6 @@ int main()
         }
     }
 
-    img.save("../render_git.bmp");
+    img.save("../render.bmp");
     return 0;
 }
