@@ -2,9 +2,18 @@
 
 #include <cmath>
 
-Sphere::Sphere() : center{}, radius{} { }
+#include "Lambertian.hpp"
 
-Sphere::Sphere(const Vec3 &center, f32 r) : center{center}, radius{r} { }
+Sphere::Sphere()
+    : center{}, radius{}, material{new Lambertian({1.f, 1.f, 1.f})} { }
+
+Sphere::Sphere(const Vec3 &center, f32 r, Material* mat)
+    : center{center}, radius{r}, material{mat} { }
+
+Sphere::~Sphere()
+{
+    delete material;
+}
 
 bool Sphere::hit(const Ray& r, f32 tMin, f32 tMax, HitRecord& rec) const
 {
@@ -22,6 +31,7 @@ bool Sphere::hit(const Ray& r, f32 tMin, f32 tMax, HitRecord& rec) const
             rec.t = temp;
             rec.p = r.at(rec.t);
             rec.normal = (rec.p - center) / radius;
+            rec.matPtr = material;
             return true;
         }
 
@@ -31,6 +41,7 @@ bool Sphere::hit(const Ray& r, f32 tMin, f32 tMax, HitRecord& rec) const
             rec.t = temp;
             rec.p = r.at(rec.t);
             rec.normal = (rec.p - center) / radius;
+            rec.matPtr = material;
             return true;
         }
     }

@@ -2,11 +2,14 @@
 
 #include "Ray.hpp"
 
+class Material;
+
 struct HitRecord
 {
     f32 t;
     Vec3 p;
     Vec3 normal;
+    Material* matPtr;
 };
 
 class Hitable

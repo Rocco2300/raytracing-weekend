@@ -184,11 +184,6 @@ Color* Image::transformToFloat(Color8* data)
         ret[i].z = static_cast<f32>(data[i].b);
 
         ret[i] /= 255.f;
-
-        std::cout << ret[i] << " ";
-
-        if (i % width == (width - 1))
-            std::cout << '\n';
     }
 
     return ret;

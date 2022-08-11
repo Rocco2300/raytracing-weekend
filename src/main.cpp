@@ -6,14 +6,23 @@
 #include "Ray.hpp"
 #include "Image.hpp"
 #include "Util.hpp"
+#include "Lambertian.hpp"
 
-Vec3 color(const Ray& r, Hitable *hitable)
+Vec3 color(const Ray& r, Hitable *hitable, int depth)
 {
     HitRecord rec;
-    if (hitable->hit(r, 0.0, std::numeric_limits<float>::max(), rec))
+    if (hitable->hit(r, 0.001f, std::numeric_limits<float>::max(), rec))
     {
-        Vec3 target = rec.p + rec.normal + randomInUnitSphere();
-        return 0.5f*color(Ray(rec.p, target-rec.p), hitable);
+        Ray scattered;
+        Vec3 attenuation;
+        if (depth < 50 && rec.matPtr->scatter(r, rec, attenuation, scattered))
+        {
+            return attenuation * color(scattered, hitable, depth + 1);
+        }
+        else
+        {
+            return {0.f, 0.f, 0.f};
+        }
     }
     else
     {
@@ -25,7 +34,7 @@ Vec3 color(const Ray& r, Hitable *hitable)
 
 int main()
 {
-    const int width = 200;
+    const int width = 800;
     const int height = width / 2;
     const int sampleCount = 100;
 
@@ -35,8 +44,8 @@ int main()
     Camera cam;
 
     Hitable *list[2];
-    list[0] = new Sphere(Vec3(0, 0, -1), 0.5f);
-    list[1] = new Sphere(Vec3(0, -100.5, -1), 100);
+    list[0] = new Sphere(Vec3(0, 0, -1), 0.5f, new Lambertian({0.8f, 0.3f, 0.3f}));
+    list[1] = new Sphere(Vec3(0, -100.5, -1), 100, new Lambertian({0.8f, 0.8f, 0.f}));
     Hitable *world = new HitableList(list, 2);
 
     for (int y = 0; y < height; y++)
@@ -50,7 +59,7 @@ int main()
                 f32 v = f32(y + randFloat()) / f32(height);
 
                 Ray r = cam.getRay(u, v);
-                col += color(r, world);
+                col += color(r, world, 0);
             }
             col /= float(sampleCount);
             col = Vec3(std::sqrt(col.x), std::sqrt(col.y), std::sqrt(col.z));
