@@ -7,6 +7,7 @@
 #include "Image.hpp"
 #include "Util.hpp"
 #include "Lambertian.hpp"
+#include "Metal.hpp"
 
 Vec3 color(const Ray& r, Hitable *hitable, int depth)
 {
@@ -43,10 +44,12 @@ int main()
 
     Camera cam;
 
-    Hitable *list[2];
-    list[0] = new Sphere(Vec3(0, 0, -1), 0.5f, new Lambertian({0.8f, 0.3f, 0.3f}));
-    list[1] = new Sphere(Vec3(0, -100.5, -1), 100, new Lambertian({0.8f, 0.8f, 0.f}));
-    Hitable *world = new HitableList(list, 2);
+    Hitable *list[4];
+    list[0] = new Sphere({0, 0, -1}, 0.5f, new Lambertian({0.8f, 0.3f, 0.3f}));
+    list[1] = new Sphere({0, -100.5, -1}, 100, new Lambertian({0.8f, 0.8f, 0.f}));
+    list[2] = new Sphere({1, 0, -1}, 0.5f, new Metal({0.8f, 0.6f, 0.2f}, 0.1f));
+    list[3] = new Sphere({{-1, 0, -1}, 0.5f, new Metal({0.8f, 0.8f, 0.8f}, 0.5f)});
+    Hitable *world = new HitableList(list, 4);
 
     for (int y = 0; y < height; y++)
     {

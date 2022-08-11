@@ -84,3 +84,8 @@ inline Vec3 unitVector(const Vec3& v)
 {
     return v / v.length();
 }
+
+inline Vec3 reflect(const Vec3& v, const Vec3& n)
+{
+    return v - 2*dot(v, n)*n;
+}

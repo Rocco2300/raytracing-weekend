@@ -2,10 +2,8 @@
 
 #include <cmath>
 
-#include "Lambertian.hpp"
-
 Sphere::Sphere()
-    : center{}, radius{}, material{new Lambertian({1.f, 1.f, 1.f})} { }
+    : center{}, radius{}, material{} { }
 
 Sphere::Sphere(const Vec3 &center, f32 r, Material* mat)
     : center{center}, radius{r}, material{mat} { }
