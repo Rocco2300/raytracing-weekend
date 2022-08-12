@@ -9,16 +9,25 @@
 #include "Lambertian.hpp"
 #include "Metal.hpp"
 
-Vec3 color(const Ray& r, Hitable *hitable, int depth)
+#include <cmath>
+#include <algorithm>
+
+Color color(const Ray& r, Hitable *hitable, int depth)
 {
+    const f32 F32MAX = std::numeric_limits<float>::max();
+    const Vec3 light(2.f, 2.f, 0.f);
+
     HitRecord rec;
-    if (hitable->hit(r, 0.001f, std::numeric_limits<float>::max(), rec))
+    if (hitable->hit(r, 0.001f, F32MAX, rec))
     {
         Ray scattered;
         Vec3 attenuation;
-        if (depth < 50 && rec.matPtr->scatter(r, rec, attenuation, scattered))
+        if (depth < 100 && rec.matPtr->scatter(r, rec, attenuation, scattered))
         {
-            return attenuation * color(scattered, hitable, depth + 1);
+            f32 receievedLight = std::max(dot(rec.normal, unitVector(light - rec.p)), 0.1f);
+            if (hitable->hit(Ray(rec.p, light - rec.p), 0.001, F32MAX, rec))
+                receievedLight = 0.1f;
+            return receievedLight * attenuation * color(scattered, hitable, depth + 1);
         }
         else
         {
@@ -29,7 +38,7 @@ Vec3 color(const Ray& r, Hitable *hitable, int depth)
     {
         Vec3 unitDirection = unitVector(r.direction);
         f32 t = 0.5f * (unitDirection.y + 1.f);
-        return (1.f - t)*Vec3(1.f) + t*Vec3(0.5f, 0.7f, 1.f);
+        return (1.f - t)*Color(1.f) + t*Color(0.5f, 0.7f, 1.f);
     }
 }
 
@@ -55,7 +64,7 @@ int main()
     {
         for (int x = 0; x < width; x++)
         {
-            Vec3 col(0, 0, 0);
+            Color col(0, 0, 0);
             for (int s = 0; s < sampleCount; s++)
             {
                 f32 u = f32(x + randFloat()) / f32(width);
@@ -65,7 +74,7 @@ int main()
                 col += color(r, world, 0);
             }
             col /= float(sampleCount);
-            col = Vec3(std::sqrt(col.x), std::sqrt(col.y), std::sqrt(col.z));
+            col = Color(std::sqrt(col.r), std::sqrt(col.g), std::sqrt(col.b));
 
             img(x, y).r = col.x;
             img(x, y).g = col.y;
