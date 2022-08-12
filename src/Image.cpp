@@ -179,9 +179,9 @@ Color* Image::transformToFloat(Color8* data)
 
     for (int i = 0; i < size; i++)
     {
-        ret[i].x = static_cast<f32>(data[i].r);
-        ret[i].y = static_cast<f32>(data[i].g);
-        ret[i].z = static_cast<f32>(data[i].b);
+        ret[i].r = static_cast<f32>(data[i].r);
+        ret[i].g = static_cast<f32>(data[i].g);
+        ret[i].b = static_cast<f32>(data[i].b);
 
         ret[i] /= 255.f;
     }
@@ -197,9 +197,11 @@ Image::Color8* Image::transformToChar(Color* data)
 
     for (int i = 0; i < size; i++)
     {
-        ret[i].r = static_cast<u8>(data[i].x * 255);
-        ret[i].g = static_cast<u8>(data[i].y * 255);
-        ret[i].b = static_cast<u8>(data[i].z * 255);
+        data[i].clampComponents(0.f, 1.f);
+
+        ret[i].r = static_cast<u8>(data[i].r * 255);
+        ret[i].g = static_cast<u8>(data[i].g * 255);
+        ret[i].b = static_cast<u8>(data[i].b * 255);
     }
 
     return ret;
