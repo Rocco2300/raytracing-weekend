@@ -1,6 +1,7 @@
 #include "Vec3.hpp"
 
 #include <cmath>
+#include <algorithm>
 
 Vec3::Vec3()
     : x{}, y{}, z{} { }
@@ -61,6 +62,13 @@ f32 Vec3::squaredLength() const
 void Vec3::makeUnitVec()
 {
     *this /= this->length();
+}
+
+void Vec3::clampComponents(f32 min, f32 max)
+{
+    std::clamp(x, min, max);
+    std::clamp(y, min, max);
+    std::clamp(z, min, max);
 }
 
 std::ostream& operator<<(std::ostream& os, const Vec3& v)

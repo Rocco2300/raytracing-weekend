@@ -26,6 +26,7 @@ public:
     f32 length() const;
     f32 squaredLength() const;
     void makeUnitVec();
+    void clampComponents(f32 min, f32 max);
 
     friend std::ostream& operator<<(std::ostream& os, const Vec3& v);
 };
