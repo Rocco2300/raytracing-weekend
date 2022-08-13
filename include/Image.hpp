@@ -7,8 +7,6 @@
 
 #include "Vec3.hpp"
 
-using Color = Vec3;
-
 class Image
 {
 private:
