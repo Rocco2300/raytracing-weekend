@@ -2,9 +2,58 @@
 
 #include <random>
 #include <chrono>
+#include <iomanip>
+#include <iostream>
 
 #include "Vec3.hpp"
 #include "Types.hpp"
+
+inline void loadingBarInit()
+{
+    std::ostream::sync_with_stdio(false);
+    std::cout
+        << "\e[?25l"
+        << std::fixed
+        << std::setprecision(2)
+        << std::left
+        << std::setfill((char)179);
+}
+
+inline void loadingBarPrint(int progress, int total)
+{
+    std::string white = "\u001b[37;1m";
+    std::string green = "\u001b[32;1m";
+    std::string yellow = "\u001b[33;1m";
+    std::string loadingBar;
+
+    f32 percent = 100 * ((float)progress / total);
+
+    loadingBar.resize(percent / 2);
+    std::fill(loadingBar.begin(), loadingBar.end(), (char)219);
+
+    std::cout
+        << '\r'
+        << white
+        << "Scanlines "
+        << (progress == total ? green : yellow)
+        << (char)179
+        << std::setw(100 / 2)
+        << std::setfill((char)178)
+        << loadingBar
+        << std::setw(1)
+        << (char)179
+        << ' '
+        << white
+        << percent
+        << "%"
+        << std::flush;
+}
+
+inline void loadingBarCleanup()
+{
+    std::string reset = "\u001b[0m";
+    std::cout << "\e[?25h" << reset;
+}
 
 inline f32 randFloat()
 {
