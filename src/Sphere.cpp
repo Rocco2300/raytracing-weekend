@@ -2,6 +2,8 @@
 
 #include <cmath>
 
+#include "Material.hpp"
+
 Sphere::Sphere()
     : center{}, radius{}, material{} { }
 
@@ -11,6 +13,7 @@ Sphere::Sphere(const Vec3 &center, f32 r, Material* mat)
 Sphere::~Sphere()
 {
     delete material;
+    material = nullptr;
 }
 
 bool Sphere::hit(const Ray& r, f32 tMin, f32 tMax, HitRecord& rec) const
