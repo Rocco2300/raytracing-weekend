@@ -5,9 +5,6 @@
 class Lambertian : public Material
 {
 public:
-    Vec3 albedo;
-
-public:
     Lambertian();
     Lambertian(const Vec3& albedo);
 

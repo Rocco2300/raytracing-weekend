@@ -24,10 +24,13 @@ Color color(const Ray& r, Hitable *hitable, int depth)
         Vec3 attenuation;
         if (depth < 100 && rec.matPtr->scatter(r, rec, attenuation, scattered))
         {
-            f32 receievedLight = std::max(dot(rec.normal, unitVector(light - rec.p)), 0.1f);
-            if (hitable->hit(Ray(rec.p, light - rec.p), 0.001, F32MAX, rec))
-                receievedLight = 0.1f;
-            return receievedLight * attenuation * color(scattered, hitable, depth + 1);
+            Vec3 L = unitVector(light - rec.p);
+            Vec3 N = rec.normal;
+
+            f32 illumination = std::max(dot(N, L), 0.1f);
+            if (hitable->hit(Ray(rec.p, L), 0.001, F32MAX, rec))
+                illumination = 0.1f;
+            return illumination * attenuation * color(scattered, hitable, depth + 1);
         }
         else
         {

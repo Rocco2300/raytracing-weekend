@@ -2,9 +2,9 @@
 
 #include "Util.hpp"
 
-Metal::Metal() : albedo{}, roughness{} { }
+Metal::Metal() : Material() { }
 
-Metal::Metal(const Vec3& albedo, f32 roughness) : albedo{albedo}, roughness{roughness} { }
+Metal::Metal(const Vec3& albedo, f32 roughness) : Material(albedo, roughness) { }
 
 bool Metal::scatter(const Ray &rIn, const HitRecord &rec, Vec3 &attenuation, Ray &scattered) const
 {

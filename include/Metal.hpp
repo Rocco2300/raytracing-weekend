@@ -5,10 +5,6 @@
 class Metal : public Material
 {
 public:
-    Vec3 albedo;
-    f32 roughness;
-
-public:
     Metal();
     Metal(const Vec3& albedo, f32 roughness);
 

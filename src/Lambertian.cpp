@@ -2,9 +2,9 @@
 
 #include "Util.hpp"
 
-Lambertian::Lambertian() : albedo{} { }
+Lambertian::Lambertian() : Material() { }
 
-Lambertian::Lambertian(const Vec3 &albedo) : albedo{albedo} { }
+Lambertian::Lambertian(const Vec3 &albedo) : Material(albedo, .8f) { }
 
 bool Lambertian::scatter(const Ray &rIn, const HitRecord &rec, Vec3 &attenuation, Ray &scattered) const
 {
