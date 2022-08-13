@@ -10,7 +10,18 @@
 #include "Metal.hpp"
 
 #include <cmath>
+#include <iomanip>
+#include <sstream>
+#include <iostream>
+#include <windows.h>
 #include <algorithm>
+
+void set_cursor(bool visible){
+    CONSOLE_CURSOR_INFO info;
+    info.dwSize = 100;
+    info.bVisible = visible;
+    SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &info);
+}
 
 Color color(const Ray& r, Hitable *hitable, int depth)
 {
@@ -47,7 +58,7 @@ Color color(const Ray& r, Hitable *hitable, int depth)
 
 int main()
 {
-    const int width = 800;
+    const int width = 200;
     const int height = width / 2;
     const int sampleCount = 100;
 
@@ -63,8 +74,28 @@ int main()
     list[3] = new Sphere({{-1, 0, -1}, 0.5f, new Metal({0.8f, 0.8f, 0.8f}, 0.5f)});
     Hitable *world = new HitableList(list, 4);
 
-    for (int y = 0; y < height; y++)
+//    set_cursor(false);
+    std::ostream::sync_with_stdio(false);
+    std::cout << "\e[?25l" << std::fixed << std::setprecision(2) << std::left << std::setfill((char)179);
+    for (int y = 0; y <= height; y++)
     {
+        f32 percent = 100 * ((float)y / height);
+
+        std::string empty;
+        std::string filled;
+
+        filled.resize(percent / 2);
+        std::fill(filled.begin(), filled.end(), (char)219);
+
+
+        if (y == height)
+        {
+            std::cout << '\r' << "\u001b[32;1m" << (char)179 << std::setw(100 / 2) << std::setfill((char)178) << filled << std::setw(1) << (char)179 << percent << "%" << "\u001b[0m" << std::flush;
+            break;
+        }
+
+        std::cout << '\r' << "\u001b[33m" << (char)179 << std::setw(100 / 2) << std::setfill((char)178) << filled << std::setw(1) << (char)179 << percent << "%" << std::flush;
+
         for (int x = 0; x < width; x++)
         {
             Color col(0, 0, 0);
@@ -84,6 +115,7 @@ int main()
             img(x, y).b = col.z;
         }
     }
+//    set_cursor(true);
 
     img.save("../render.bmp");
     return 0;
