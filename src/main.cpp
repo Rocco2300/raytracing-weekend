@@ -56,7 +56,7 @@ int main()
     Image img;
     img.create(width, height);
 
-    Camera cam;
+    Camera cam(90, (f32)width / (f32)height);
 
     Hitable *list[4];
     list[0] = new Sphere({0, 0, -1}, 0.5f, new Lambertian({0.8f, 0.3f, 0.3f}));
