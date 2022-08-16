@@ -10,16 +10,22 @@ Camera::Camera()
     origin = Vec3(0.f, 0.f, 0.f);
 }
 
-Camera::Camera(f32 vFov, f32 aspect)
+Camera::Camera(Vec3 lookFrom, Vec3 lookAt, Vec3 up, f32 vFov, f32 aspect)
 {
+    Vec3 u, v, w;
     f32 theta = vFov * M_PI/180;
     f32 halfHeight = std::tan(theta/2);
     f32 halfWidth = aspect * halfHeight;
 
+    origin = lookFrom;
+    w = unitVector(lookFrom - lookAt);
+    u = unitVector(cross(up, w));
+    v = cross(w, u);
+
     lowerLeftCorner = Vec3(-halfWidth, halfHeight, -1);
-    horizontal = Vec3(2*halfWidth, 0.f, 0.f);
-    vertical = Vec3(0.f, -2*halfHeight, 0.f);
-    origin = (0.f, 0.f, 0.f);
+    lowerLeftCorner = origin - halfWidth*u - halfHeight*v - w;
+    horizontal = 2 * halfWidth * u;
+    vertical = 2 * halfHeight * v;
 }
 
 Ray Camera::getRay(f32 u, f32 v)

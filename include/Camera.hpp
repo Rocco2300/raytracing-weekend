@@ -11,7 +11,7 @@ public:
     Vec3 vertical;
 public:
     Camera();
-    Camera(f32 vFov, f32 aspect);
+    Camera(Vec3 lookFrom, Vec3 lookAt, Vec3 up, f32 vFov, f32 aspect);
 
     Ray getRay(f32 u, f32 v);
 };

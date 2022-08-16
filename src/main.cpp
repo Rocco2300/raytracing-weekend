@@ -17,7 +17,7 @@
 Color color(const Ray& r, Hitable *hitable, int depth)
 {
     const f32 F32MAX = std::numeric_limits<float>::max();
-    const Vec3 light(2.f, 2.f, 0.f);
+    const Vec3 light(2.f, 2.f, 3.f);
 
     HitRecord rec;
     if (hitable->hit(r, 0.001f, F32MAX, rec))
@@ -49,21 +49,22 @@ Color color(const Ray& r, Hitable *hitable, int depth)
 
 int main()
 {
-    const int width = 800;
+    const int width = 400;
     const int height = width / 2;
     const int sampleCount = 100;
 
     Image img;
     img.create(width, height);
 
-    Camera cam(90, (f32)width / (f32)height);
+    Camera cam(Vec3(-2, 2, 1), Vec3(0, 0, -1), Vec3(0, -1, 0), 75, (f32)width / (f32)height);
 
-    Hitable *list[4];
-    list[0] = new Sphere({0, 0, -1}, 0.5f, new Lambertian({0.8f, 0.3f, 0.3f}));
-    list[1] = new Sphere({0, -100.5, -1}, 100, new Lambertian({0.8f, 0.8f, 0.f}));
-    list[2] = new Sphere({1, 0, -1}, 0.5f, new Metal({0.8f, 0.6f, 0.2f}, 0.1f));
-    list[3] = new Sphere({{-1, 0, -1}, 0.5f, new Metal({0.8f, 0.8f, 0.8f}, 0.5f)});
-    Hitable *world = new HitableList(list, 4);
+    f32 R = std::cos(M_PI / 4);
+
+    Hitable *list[3];
+    list[0] = new Sphere({-R, 0, -1}, R, new Lambertian({0.8f, 0.3f, 0.3f}));
+    list[1] = new Sphere({R, 0, -1}, R, new Metal({0.8f, 0.6f, 0.2f}, 0.1f));
+    list[2] = new Sphere({0, -100.5, -1}, 100, new Lambertian({0.8f, 0.8f, 0.f}));
+    Hitable *world = new HitableList(list, 3);
 
     loadingBarInit();
     for (int y = 0; y <= height; y++)
