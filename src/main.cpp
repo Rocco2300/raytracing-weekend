@@ -56,15 +56,21 @@ int main()
     Image img;
     img.create(width, height);
 
-    Camera cam(Vec3(-2, 2, 1), Vec3(0, 0, -1), Vec3(0, -1, 0), 75, (f32)width / (f32)height);
+    Vec3 up(0, -1, 0);
+    Vec3 lookAt(0, 0, -1);
+    Vec3 lookFrom(3, 3, 2);
 
-    f32 R = std::cos(M_PI / 4);
+    f32 aperture = 2.f;
+    f32 distToFocus = (lookFrom - lookAt).length();
 
-    Hitable *list[3];
-    list[0] = new Sphere({-R, 0, -1}, R, new Lambertian({0.8f, 0.3f, 0.3f}));
-    list[1] = new Sphere({R, 0, -1}, R, new Metal({0.8f, 0.6f, 0.2f}, 0.1f));
-    list[2] = new Sphere({0, -100.5, -1}, 100, new Lambertian({0.8f, 0.8f, 0.f}));
-    Hitable *world = new HitableList(list, 3);
+    Camera cam(lookFrom, lookAt, up, 20, (f32)width / (f32)height, aperture, distToFocus);
+
+    Hitable *list[4];
+    list[0] = new Sphere({0, 0, -1}, .5f, new Lambertian({0.8f, 0.3f, 0.3f}));
+    list[1] = new Sphere({1, 0, -1}, .5f, new Metal({0.8f, 0.6f, 0.2f}, 0.1f));
+    list[2] = new Sphere({-1, 0, -1}, .5f, new Metal({0.8f, 0.8f, 0.8f}, 0.3f));
+    list[3] = new Sphere({0, -100.5, -1}, 100, new Lambertian({0.8f, 0.8f, 0.f}));
+    Hitable *world = new HitableList(list, 4);
 
     loadingBarInit();
     for (int y = 0; y <= height; y++)

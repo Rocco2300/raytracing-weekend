@@ -77,3 +77,14 @@ inline Vec3 randomInUnitSphere()
     return p;
 }
 
+inline Vec3 randomInUnitDisc()
+{
+    Vec3 p;
+
+    do
+    {
+        p = 2.f * Vec3(randFloat(), randFloat(), 0) - Vec3(1, 1, 0);
+    } while (dot(p, p) >= 1.f);
+
+    return p;
+}

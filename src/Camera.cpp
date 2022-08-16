@@ -1,5 +1,7 @@
 #include "Camera.hpp"
 
+#include "Util.hpp"
+
 #include <cmath>
 
 Camera::Camera()
@@ -10,9 +12,18 @@ Camera::Camera()
     origin = Vec3(0.f, 0.f, 0.f);
 }
 
-Camera::Camera(Vec3 lookFrom, Vec3 lookAt, Vec3 up, f32 vFov, f32 aspect)
+Camera::Camera(
+    Vec3 lookFrom,
+    Vec3 lookAt,
+    Vec3 up,
+    f32 vFov,
+    f32 aspect,
+    f32 aperture,
+    f32 focusDist
+)
 {
-    Vec3 u, v, w;
+    lensRadius = aperture / 2;
+
     f32 theta = vFov * M_PI/180;
     f32 halfHeight = std::tan(theta/2);
     f32 halfWidth = aspect * halfHeight;
@@ -23,12 +34,14 @@ Camera::Camera(Vec3 lookFrom, Vec3 lookAt, Vec3 up, f32 vFov, f32 aspect)
     v = cross(w, u);
 
     lowerLeftCorner = Vec3(-halfWidth, halfHeight, -1);
-    lowerLeftCorner = origin - halfWidth*u - halfHeight*v - w;
-    horizontal = 2 * halfWidth * u;
-    vertical = 2 * halfHeight * v;
+    lowerLeftCorner = origin - halfWidth*focusDist*u - halfHeight*focusDist*v - focusDist*w;
+    horizontal = 2 * halfWidth * focusDist * u;
+    vertical = 2 * halfHeight * focusDist * v;
 }
 
-Ray Camera::getRay(f32 u, f32 v)
+Ray Camera::getRay(f32 s, f32 t)
 {
-    return Ray(origin, lowerLeftCorner + u*horizontal + v*vertical - origin);
+    Vec3 rd = lensRadius * randomInUnitDisc();
+    Vec3 offset = u * rd.x + v * rd.y;
+    return Ray(origin + offset, lowerLeftCorner + s*horizontal + t*vertical - origin - offset);
 }
