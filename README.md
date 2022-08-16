@@ -10,3 +10,5 @@ and a excuse to learn how to use cmake on a smaller and more manageable project.
 ![First diffuse render](render_git.bmp)
 
 ![Shadows and positionable camera](render_git1.bmp)
+
+![Focus plane](render_git2.bmp)
