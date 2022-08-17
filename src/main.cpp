@@ -47,6 +47,42 @@ Color color(const Ray& r, Hitable *hitable, int depth)
     }
 }
 
+Hitable* randomScene()
+{
+    int n = 500;
+    Hitable** list = new Hitable*[n+1];
+    list[0] = new Sphere(Vec3(0, -1000, 0), 1000, new Lambertian(Vec3(.5f, .5f, .5f)));
+    int i = 1;
+
+    for (int a = -11; a < 11; a++)
+    {
+        for (int b = -11; b < 11; b++) {
+            f32 matChosen = randFloat();
+            Vec3 center(a + 0.9f * randFloat(), 0.2f, b + 0.9f * randFloat());
+
+            if ((center - Vec3(4, 0.2f, 0)).length() > 0.9f)
+            {
+                if (matChosen < 0.8f)
+                {
+                    list[i++] = new Sphere(center, 0.2f,
+                        new Lambertian(Vec3(randFloat()*randFloat(), randFloat()*randFloat(), randFloat()*randFloat())));
+                }
+                else if (matChosen < 0.95f)
+                {
+                    list[i++] = new Sphere(center, 0.2f,
+                       new Metal(Vec3(.5f*(1 + randFloat()), .5f*(1 + randFloat()), .5f*(1 + randFloat())), .5f*randFloat()));
+                }
+            }
+        }
+    }
+
+    list[i++] = new Sphere({0, .5f, -1}, .5f, new Lambertian({0.8f, 0.3f, 0.3f}));
+    list[i++] = new Sphere({1, .5f, -1}, .5f, new Metal({0.8f, 0.6f, 0.2f}, 0.2f));
+    list[i++] = new Sphere({-1, .5f, -1}, .5f, new Metal({0.8f, 0.8f, 0.8f}, 0.f));
+
+    return new HitableList(list, i);
+}
+
 int main()
 {
     const int width = 400;
@@ -57,20 +93,15 @@ int main()
     img.create(width, height);
 
     Vec3 up(0, -1, 0);
-    Vec3 lookAt(0, 0, -1);
-    Vec3 lookFrom(3, 3, 2);
+    Vec3 lookAt(-.5f, .5f, -1);
+    Vec3 lookFrom(-3, 2, 2);
 
-    f32 aperture = 2.f;
-    f32 distToFocus = (lookFrom - lookAt).length();
+    f32 aperture = 0.1f;
+    f32 distToFocus = 5.f;
 
-    Camera cam(lookFrom, lookAt, up, 20, (f32)width / (f32)height, aperture, distToFocus);
+    Camera cam(lookFrom, lookAt, up, 30, (f32)width / (f32)height, aperture, distToFocus);
 
-    Hitable *list[4];
-    list[0] = new Sphere({0, 0, -1}, .5f, new Lambertian({0.8f, 0.3f, 0.3f}));
-    list[1] = new Sphere({1, 0, -1}, .5f, new Metal({0.8f, 0.6f, 0.2f}, 0.1f));
-    list[2] = new Sphere({-1, 0, -1}, .5f, new Metal({0.8f, 0.8f, 0.8f}, 0.3f));
-    list[3] = new Sphere({0, -100.5, -1}, 100, new Lambertian({0.8f, 0.8f, 0.f}));
-    Hitable *world = new HitableList(list, 4);
+    Hitable* world = randomScene();
 
     loadingBarInit();
     for (int y = 0; y <= height; y++)
