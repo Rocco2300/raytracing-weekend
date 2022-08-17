@@ -53,6 +53,7 @@ inline void loadingBarCleanup()
 {
     std::string reset = "\u001b[0m";
     std::cout << "\e[?25h" << reset;
+    std::ostream::sync_with_stdio(true);
 }
 
 inline f32 randFloat()
